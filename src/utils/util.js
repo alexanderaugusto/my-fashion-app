@@ -19,17 +19,21 @@ const colors = {
 }
 
 const createRows = (data, columns) => {
-  const rows = Math.floor(data.length / columns)
-  let lastRowElements = data.length - rows * columns
+  const array = data.filter(item => item)
+
+  const rows = Math.floor(array.length / columns)
+  let lastRowElements = array.length - rows * columns
   while (lastRowElements !== columns) { 
-    data.push({ 
+    console.log(lastRowElements)
+    array.push({ 
       id: `empty-${lastRowElements}`,
       name: `empty-${lastRowElements}`,
       empty: true
     });
-    lastRowElements += 1;
+    lastRowElements ++;
   }
-  return data; 
+  
+  return array; 
 }
 
 const priceFormat = (price) => {

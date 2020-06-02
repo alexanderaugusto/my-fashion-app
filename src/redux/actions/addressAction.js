@@ -1,13 +1,14 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 import { getUser } from "../actions/userAction"
 
-export const createAddress = (data, onInsert) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const createAddress = (data, onInsert, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -23,10 +24,13 @@ export const createAddress = (data, onInsert) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const updateAddress = (data, onEdit) => async dispatch => {
+export const updateAddress = (data, onEdit, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
+
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -42,10 +46,13 @@ export const updateAddress = (data, onEdit) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const deleteAddress = (id) => async dispatch => {
+export const deleteAddress = (id, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
+
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     },
     data: { id }
   }

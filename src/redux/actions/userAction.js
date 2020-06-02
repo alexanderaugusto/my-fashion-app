@@ -1,23 +1,26 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 
-export const getUser = () => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token"))) {
+export const getUser = (navigation, goBack) => async dispatch => {
+  console.log(await AsyncStorage.getItem("user-token"))
+  if (!await AsyncStorage.getItem("user-token"))
     return null
-  }
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
   dispatch({ type: "START_LOADING" })
-  await api.request.get(api.routes.ROUTE_USER_LIST, config, null, (cod, message, payload) => {
+  await api.request.get(api.routes.ROUTE_USER_LIST, config, null, async (cod, message, payload) => {
     if (cod === 200) {
       dispatch({
         type: "GET_USER_INFO",
         payload
       })
+      if (goBack)
+        navigation.goBack()
     } else {
       dispatch({ type: "OPEN_ALERT", payload: { open: true, type: "error", message } })
     }
@@ -25,13 +28,13 @@ export const getUser = () => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const updateUser = (data, onSubmit) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const updateUser = (data, onSubmit, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -47,15 +50,12 @@ export const updateUser = (data, onSubmit) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const login = (data, redirect, history) => async dispatch => {
+export const login = (data, navigation) => async dispatch => {
   dispatch({ type: "START_LOADING" })
-  await api.request.post(api.routes.ROUTE_LOGIN, null, data, (cod, message, payload) => {
+  await api.request.post(api.routes.ROUTE_LOGIN, null, data, async (cod, message, payload) => {
     if (cod === 200) {
-      console.log(payload)
-      localStorage.setItem("user-token", JSON.stringify(payload.token))
-      if (redirect)
-        history.push(redirect)
-      window.location.reload()
+      await AsyncStorage.setItem("user-token", payload.token)
+      dispatch(getUser(navigation, true))
     } else {
       dispatch({ type: "OPEN_ALERT", payload: { open: true, type: "error", message } })
     }
@@ -63,14 +63,12 @@ export const login = (data, redirect, history) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const register = (data, redirect, history) => async dispatch => {
+export const register = (data, navigation) => async dispatch => {
   dispatch({ type: "START_LOADING" })
-  await api.request.post(api.routes.ROUTE_USER_INSERT, null, data, (cod, message, payload) => {
+  await api.request.post(api.routes.ROUTE_USER_INSERT, null, data, async (cod, message, payload) => {
     if (cod === 200) {
-      localStorage.setItem("user-token", JSON.stringify(payload.token))
-      if (redirect)
-        history.push(redirect)
-      window.location.reload()
+      await AsyncStorage.setItem("user-token", payload.token)
+      dispatch(getUser(navigation, true))
     } else {
       dispatch({ type: "OPEN_ALERT", payload: { open: true, type: "error", message } })
     }
@@ -78,16 +76,16 @@ export const register = (data, redirect, history) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const uploadImage = (image) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const uploadImage = (image, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   let formdata = new FormData()
   formdata.append("files", image)
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token")),
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token"),
       'Content-Type': 'multipart/form-data'
     }
   }

@@ -1,6 +1,7 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 
-export const getCategories = () => async dispatch => {
+export const getCategories = (navigation) => async dispatch => {
   dispatch({ type: "START_LOADING" })
   await api.request.get(api.routes.ROUTE_CATEGORY_GET_ALL, null, null, (cod, message, payload) => {
     if (cod === 200) {
@@ -17,7 +18,7 @@ export const getCategories = () => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const getSubcategoires = () => async dispatch => {
+export const getSubcategoires = (navigation) => async dispatch => {
   dispatch({ type: "START_LOADING" })
   await api.request.get(api.routes.ROUTE_SUBCATEGORY_GET_ALL, null, null, (cod, message, payload) => {
     if (cod === 200) {
@@ -32,7 +33,7 @@ export const getSubcategoires = () => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const getBrands = (id) => async dispatch => {
+export const getBrands = (id,navigation) => async dispatch => {
   dispatch({ type: "START_LOADING" })
   await api.request.get(api.routes.ROUTE_BRAND_GET_ALL, null, null, (cod, message, payload) => {
     if (cod === 200) {

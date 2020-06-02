@@ -1,14 +1,15 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 import { getUser } from "../actions/userAction"
 import { dateToBrDate } from "../../constants/functions"
 
-export const createOrder = (orderItems, history) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const createOrder = (orderItems, history, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -30,13 +31,13 @@ export const createOrder = (orderItems, history) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const listStatus = () => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const listStatus = (navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 

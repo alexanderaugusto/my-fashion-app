@@ -1,4 +1,4 @@
-export const changeCheckoutStep = (checkoutStep) => async dispatch => {
+export const changeCheckoutStep = (checkoutStep,navigation) => async dispatch => {
   dispatch({
     type: "CHANGE_STEP",
     checkoutStep

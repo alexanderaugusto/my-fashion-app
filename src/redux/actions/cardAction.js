@@ -1,13 +1,14 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 import { getUser } from "../actions/userAction"
 
-export const createCard = (data, onInsert) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const createCard = (data, onInsert, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -23,10 +24,13 @@ export const createCard = (data, onInsert) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const updateCard = (data, onEdit) => async dispatch => {
+export const updateCard = (data, onEdit, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
+
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -42,10 +46,13 @@ export const updateCard = (data, onEdit) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const deleteCard = (id) => async dispatch => {
+export const deleteCard = (id, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
+
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     },
     data: { id }
   }

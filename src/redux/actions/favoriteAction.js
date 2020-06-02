@@ -1,9 +1,11 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 import { getUser } from "../actions/userAction"
 
-export const insertFavoriteItem = (product_id) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const insertFavoriteItem = (product_id, navigation) => async dispatch => {
+  console.log("two =>" + await AsyncStorage.getItem("user-token"))
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const data = {
     product_id
@@ -11,7 +13,7 @@ export const insertFavoriteItem = (product_id) => async dispatch => {
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -26,13 +28,13 @@ export const insertFavoriteItem = (product_id) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const deleteFavoriteItem = (product_id) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const deleteFavoriteItem = (product_id, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     },
     data: { product_id }
   }

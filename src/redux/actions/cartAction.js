@@ -1,9 +1,10 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 import { getUser } from "../actions/userAction"
 
-export const insertCartItem = (product_id, history) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const insertCartItem = (product_id, history, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const data = {
     product_id,
@@ -12,7 +13,7 @@ export const insertCartItem = (product_id, history) => async dispatch => {
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -30,15 +31,15 @@ export const insertCartItem = (product_id, history) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const updateCartItem = (product_id, quantity) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const updateCartItem = (product_id, quantity, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const data = { product_id, quantity }
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
@@ -56,13 +57,13 @@ export const updateCartItem = (product_id, quantity) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const deleteCartItem = (product_id) => async dispatch => {
-  if (!JSON.parse(localStorage.getItem("user-token")))
-    return null
+export const deleteCartItem = (product_id, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
 
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     },
     data: { product_id }
   }

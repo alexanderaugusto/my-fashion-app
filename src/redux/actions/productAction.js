@@ -1,4 +1,5 @@
 import api from "../../services/api"
+import AsyncStorage from '@react-native-community/async-storage'
 
 export const getAllProducts = () => async dispatch => {
   dispatch({ type: "START_LOADING" })
@@ -74,10 +75,13 @@ export const filterProducts = (string) => async dispatch => {
   dispatch({ type: "STOP_LOADING" })
 }
 
-export const freightCalculator = (cep_dest, product, callback) => async dispatch => {
+export const freightCalculator = (cep_dest, product, callback, navigation) => async dispatch => {
+  if (!await AsyncStorage.getItem("user-token"))
+    return navigation.navigate("Login")
+
   const config = {
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-token"))
+      "Authorization": "Bearer " + await AsyncStorage.getItem("user-token")
     }
   }
 
